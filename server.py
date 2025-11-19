@@ -4,8 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware  # ဒီလိုပြေ�
 import sqlite3
 import os
 from datetime import datetime
+from admin_routes import admin_bp
 
 app = FastAPI(title="Movie API", version="1.0.0")
+
+app.register_blueprint(admin_bp,url_prefix='/api')
 
 # CORS middleware - Allow all origins for Telegram Mini App
 app.add_middleware(
