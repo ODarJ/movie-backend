@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from auth import token_required, generate_token, get_db_connection
 import os
 
-admin_bp = Blueprint('admin', name)
+admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/admin/login', methods=['POST'])
 def admin_login():
