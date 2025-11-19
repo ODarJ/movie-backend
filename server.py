@@ -55,15 +55,15 @@ async def add_movie(request: dict):
         cursor = conn.cursor()
         
         cursor.execute('''
-            INSERT INTO movies (title, year, genre, description, image, rating, telegram_video, telegram_group)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO movies (title, year, genre, description, image,  telegram_video, telegram_group)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (
             data.get('title'),
             data.get('year', 2024),
             data.get('genre', 'General'),
             data.get('description', ''),
             data.get('image', ''),
-            data.get('rating', 7.0),
+            
             data.get('telegram_video'),
             data.get('telegram_group')
         ))
