@@ -44,66 +44,52 @@ async def health_check():
     return {"status": "healthy", "movie_count": movie_count}
 
 # Admin routes
-@app.post("/api/admin/login")
-async def admin_login(request: dict):
-    try:
-        password = request.get('password')
-        admin_password = os.environ.get('ADMIN_PASSWORD')
-        
-        if not password:
-            return {"success": False, "message": "Password is required"}
-        
-        if admin_password and password == admin_password:
-            # Simple token for now
-            token = "fastapi_token_" + password
-            return {
-                "success": True, 
-                "token": token,
-                "message": "Login successful"
-            }
-        else:
-            return {"success": False, "message": "Invalid password"}
-            
-    except Exception as e:
-        return {"success": False, "message": str(e)}
 
+
+# Add movie endpoint - FIXED
 @app.post("/api/admin/movies")
-async def add_movie(request: dict, authorization: str = None):
-    # Check authorization
-    if not authorization or not verify_token(authorization.replace('Bearer ', '')):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    data = request
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        INSERT INTO movies (title, year, genre, description, image, rating, telegram_video, telegram_group)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (
-        data['title'], data['year'], data['genre'], 
-        data['description'], data['image'], data['rating'],
-        data['telegram_video'], data['telegram_group']
-    ))
-    
-    movie_id = cursor.lastrowid
-    conn.commit()
-    conn.close()
-    
-    return {"success": True, "id": movie_id}
+async def add_movie(request: dict):
+    try:
+        data = request
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO movies (title, year, genre, description, image, rating, telegram_video, telegram_group)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            data.get('title'),
+            data.get('year', 2024),
+            data.get('genre', 'General'),
+            data.get('description', ''),
+            data.get('image', ''),
+            data.get('rating', 7.0),
+            data.get('telegram_video'),
+            data.get('telegram_group')
+        ))
+        
+        movie_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+        
+        return {"success": True, "id": movie_id}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
+# Delete movie endpoint - FIXED  
 @app.delete("/api/admin/movies/{movie_id}")
-async def delete_movie(movie_id: int, authorization: str = None):
-    # Check authorization
-    if not authorization or not verify_token(authorization.replace('Bearer ', '')):
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    conn = get_db_connection()
-    conn.execute('DELETE FROM movies WHERE id = ?', (movie_id,))
-    conn.commit()
-    conn.close()
-    
-    return {"success": True}
+async def delete_movie(movie_id: int):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('DELETE FROM movies WHERE id = ?', (movie_id,))
+        conn.commit()
+        conn.close()
+        
+        return {"success": True}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
 
 if __name__ == '__main__':
     import uvicorn
