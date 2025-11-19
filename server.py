@@ -19,6 +19,32 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+
+# server.py ထဲမှာ ဒီ endpoint ရှိရဲ့လား?
+@app.post("/api/admin/login")
+async def admin_login(request: dict):
+    try:
+        password = request.get('password')
+        admin_password = os.environ.get('ADMIN_PASSWORD')
+        
+        if not password:
+            return {"success": False, "message": "Password is required"}
+        
+        if admin_password and password == admin_password:
+            # Simple token for now
+            token = "fastapi_token_" + password
+            return {
+                "success": True, 
+                "token": token,
+                "message": "Login successful"
+            }
+        else:
+            return {"success": False, "message": "Invalid password"}
+            
+    except Exception as e:
+        return {"success": False, "message": str(e)}
+    
+    
 # Simple token verification
 def verify_token(token: str):
     # For now, just check if token is provided
