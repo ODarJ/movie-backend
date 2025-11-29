@@ -5,22 +5,17 @@ import os
 
 app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://movie-backend-puh6.onrender.com",  # Backend itself
-        "https://web.telegram.org",                 # Telegram
-        "https://telegram.org",                     # Telegram
-        "https://*.vercel.app",                     # All Vercel domains
-        "http://localhost:3000",                    # Local development
-        "http://127.0.0.1:3000"                     # Local development
-    ],
+    allow_origins=["*"],  # Temporary - all origins allowed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
 
 # Database connection
 def get_db_connection():
