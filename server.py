@@ -10,9 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://your-app.onrender.com",
-        "https://web.telegram.org",
-        "https://telegram.org"
+        "https://movie-backend-puh6.onrender.com",  # Backend itself
+        "https://web.telegram.org",                 # Telegram
+        "https://telegram.org",                     # Telegram
+        "https://*.vercel.app",                     # All Vercel domains
+        "http://localhost:3000",                    # Local development
+        "http://127.0.0.1:3000"                     # Local development
     ],
     allow_credentials=True,
     allow_methods=["*"],
